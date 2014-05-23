@@ -73,6 +73,7 @@ h5{
   font-size:16px;
   color:#125055;
   font-weight:bold;
+  padding-top:17px;
 }
 a{
   text-decoration: none;
@@ -123,7 +124,7 @@ p,li{
   margin:0 auto;
   width:1024px;
   left:0;
-  right:14px;
+  right:40px;
   text-align:right;
   color:#fff2d9;
   font-family:'Lato', sans-serif;
@@ -288,16 +289,26 @@ p,li{
   height:100%;
 }
 /*********************** MAP ***********************/
-.marker-label{
+.marker-label-labelled{
   font-family:arial;
   font-size:18px;
+  z-index:999999;
+}
+.marker-label-selected{
+  font-family:arial;
+  font-size:18px;
+  z-index:999999;
+  pointer-events:none;
 }
 .marker-info{
   background:url('../img/infowindow.png') no-repeat;
   width:370px;
   height:255px;
   padding:35px 35px;
-  /*pointer-events:none;*/
+  pointer-events:none;
+}
+.marker-info > img{
+  pointer-events:auto;
 }
 .marker-content{
   pointer-events:auto;
@@ -401,7 +412,7 @@ p,li{
   padding-bottom:14px;
 }
 .info li:first-child .label{
-  color:#ff7e00;
+  color:#f95304;
 }
 .info li, .desc{
   font-size:12px;

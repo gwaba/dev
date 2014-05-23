@@ -17,7 +17,12 @@ var NUM_CHARS = 26; //number characters in english alphabet
 var NUM_CHARS_X2 = 52;
 var ERROR = "#ERROR!";
 var DEFAULT_DIRECTORY_ZOOM = 16;
-var PAN_IN_PIXELS = -200;
+var LEFT_PAN_IN_PIXELS = 270;
+var RIGHT_PAN_IN_PIXELS = -200;
+var DOWN_PAN_IN_PIXELS = -200;
+
+var DEFAULT_LAT = 43.0813438; //Williamson St. Madison,WI 53703
+var DEFAULT_LOG = -89.3671071; //Williamson St. Madison,WI 53703
 
 var map;
 var members = [];
@@ -70,7 +75,7 @@ $(function(){
     },
     panControlOptions: {
         position: google.maps.ControlPosition.TOP_RIGHT
-    },
+    }
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
   
@@ -79,19 +84,18 @@ $(function(){
     pixelOffset: new google.maps.Size(-226, -350),
     closeBoxMargin: "-20px 5px 2px 2px",
     disableAutoPan:true,
+    closeBoxURL:"img/info_window_close.png"
   });
   
   google.maps.event.addListener(infowindow,'closeclick',function(){
-    selectedMember.marker.selected.setVisible(false);
-    if(!selectedMember.marker.labelled.visible) selectedMember.marker.default.setVisible(true);
-    $(".directory-list > li.selected").removeClass("selected")
+    closeInfoWindow();
   });
   
   //get banner images
   fetchSheet(BANNER_DATA_URL,banners,function(){
     var $slideshow = $("#slideshow");
     banners.forEach(function(b,i){
-      var $slide = $("<a href='"+b.websiteurl+"'><div>"+b.title+"</div><img src='"+b.thumbnail+"'></a>");
+      var $slide = $("<a target='_blank' href='"+b.websiteurl+"'><div>"+b.title+"</div><img src='"+b.thumbnail+"'></a>");
       var img = new Image();
       $slideshow.append($slide);
       $(img).addClass("bg");
@@ -145,6 +149,7 @@ $(function(){
        var $visibleCats = $headline.find(".list li.show");
        $headline.find(".categories a.selected").removeClass("selected");
        $(this).addClass("selected");
+       closeInfoWindow(); //close any that are open
        if ( $visibleCats.length == 0 ){
          changeList($headline,catId);
        }
@@ -218,7 +223,6 @@ $(function(){
         //load markers based on extented data and lat/log
         var activeCat = $("ul.directory-cat .selected").data("cat");
         members.forEach(function(m,i){
-        
           m.latitude = parseFloat(m.latitude);
           m.longitude = parseFloat(m.longitude);
           
@@ -228,20 +232,25 @@ $(function(){
           //numeric label
           m.id = i++;
           
-          if(m.latitude && m.longitude){
-            var p = new google.maps.LatLng(m.latitude,m.longitude);
-            
-            m.marker = {};
-            m.marker.plain = new google.maps.Marker({ map:map, position:p, animation:google.maps.Animation.DROP, icon:markerDefaultImg,clickable: true, visible:true});
-            m.marker.default = m.marker.plain;
-            m.marker.labelled = new MarkerWithLabel({map:map, position:p, icon:markerImg, labelInBackground:false, labelClass:"marker-label",visible:false });
-            m.marker.selected = new MarkerWithLabel({map:map, position:p, icon:markerSelectedImg, labelInBackground:false, labelClass:"marker-label",visible:false });
-            google.maps.event.addListener(m.marker.plain, 'click', function(){ memberSelected(m); });
-            google.maps.event.addListener(m.marker.labelled, 'click', function(){ memberSelected(m); });
+          if (!m.latitude || !m.longitude){
+            m.latitude = DEFAULT_LAT;
+            m.longitude = DEFAULT_LOG;
           }
+    
+          var p = new google.maps.LatLng(m.latitude,m.longitude);
+            
+          m.marker = {};
+          m.marker.plain = new google.maps.Marker({ map:map, position:p, animation:google.maps.Animation.DROP, icon:markerDefaultImg,clickable: true, visible:true});
+          m.marker.default = m.marker.plain;
+          m.marker.labelled = new MarkerWithLabel({map:map, position:p, icon:markerImg, labelInBackground:false, labelClass:"marker-label-labelled",visible:false });
+          m.marker.selected = new MarkerWithLabel({map:map, position:p, icon:markerSelectedImg, labelInBackground:false, labelClass:"marker-label-selected",visible:false });
+          google.maps.event.addListener(m.marker.plain, 'click', function(){ memberSelected(m); });
+          google.maps.event.addListener(m.marker.labelled, 'click', function(){ memberSelected(m); });
+        
           //Massage Data
           if(m.categories){
             var cats = m.categories.split(",");
+            m.categories = "";
             cats.forEach(function(c,i){
               m.categories += className(c)+",";
             });
@@ -271,7 +280,6 @@ $(function(){
                         "</li>");
           $directoryList.append($dir);
           $dir.css("opacity", 1);
-          
         });
   
     $(".directory .info li:first-child, .directory .photo").click(function(){
@@ -283,12 +291,8 @@ $(function(){
  }
  
  function memberSelected(m){
-  if(selectedMember) {
-    selectedMember.marker.selected.setVisible(false);
-    selectedMember.marker.default.setVisible(true);
-  }
+  if(selectedMember) selectedMember.marker.selected.setVisible(false);
   selectedMember = m;
-  m.marker.default.setVisible(false);
   m.marker.selected.setVisible(true);
   infowindow.setContent("<div class='marker-content'>" +
                       "<ul class='info'>" +
@@ -301,11 +305,23 @@ $(function(){
                       "</div>");
   infowindow.open(map, m.marker.selected);
   
+  var $activeMember = $(".directory-list #"+m.id);
   $(".directory-list > li.selected").removeClass("selected");
-  $(".directory-list #"+m.id).addClass("selected");
+  
+  if ($activeMember.length != 0){
+      var $directory = $(".directory-list");
+      $activeMember.addClass("selected");
+      $directory.animate({
+        scrollTop: $activeMember.offset().top - $directory.offset().top + $directory.scrollTop()
+      },400);
+  };
   
   map.setCenter(m.marker.selected.position);
-  map.panBy(PAN_IN_PIXELS,0);
+  
+  if ($(".headline.active").hasClass("contact"))
+    map.panBy(LEFT_PAN_IN_PIXELS,DOWN_PAN_IN_PIXELS);
+  else
+    map.panBy(RIGHT_PAN_IN_PIXELS,DOWN_PAN_IN_PIXELS);
  }
  
   //read Google Sheet data into an array
@@ -347,10 +363,17 @@ $(function(){
     return data;
   }
   
+  function closeInfoWindow(){
+    if(selectedMember) selectedMember.marker.selected.setVisible(false);
+    $(".directory-list > li.selected").removeClass("selected");
+    infowindow.close();
+  }
+
   $("#menu-list a").click(function(){
      var c = $(this).attr('class');
      $(".headline.active").removeClass('active');
      $(".headline."+c).addClass('active');
+     closeInfoWindow();
      if((c == "directory" || c == "events" ) && !firstResize ) {
        $(window).trigger( "resize" );
        firstResize = true;
@@ -361,6 +384,15 @@ $(function(){
          unlabelMarkers(m);
        });
      }
+  });
+  
+  $("#logo").click(function(){
+    $(".headline.active").removeClass('active');
+    $(".headline.about").addClass('active');
+    closeInfoWindow();
+    members.forEach(function(m){
+      unlabelMarkers(m);
+    });
   });
   
   window.onresize = function(e){
@@ -402,7 +434,6 @@ $(function(){
             found++;
             setLabel(m,found);
             if(m.latitude && m.longitude){
-                m.marker.default.setVisible(false);
                 m.marker.labelled.setVisible(true);
                 bounds.extend(m.marker.labelled.position);
             }
@@ -418,7 +449,6 @@ $(function(){
 
  function unlabelMarkers(m){
      if(m.latitude && m.longitude){
-      if (!m.marker.selected.visible) m.marker.default.setVisible(true);
       m.marker.labelled.setVisible(false);
       m.marker.selected.labelContent = "";
       m.marker.labelled.labelContent = "";
@@ -452,6 +482,7 @@ $(function(){
  function getChar(n) {
     return String.fromCharCode(FIRST_CHAR_CODE + n);
  }
+
 
 
 
