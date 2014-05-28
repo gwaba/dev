@@ -10,6 +10,7 @@ var WELCOME_PAGE_URL = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJ
 var MEMBERSHIP_PAGE_URL  = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/153417301/public/basic?alt=json";
 var CONTACT_PAGE_URL  = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/1421411393/public/basic?alt=json";
 var BANNER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1Sa-XkixccqJHAJc4zv7JrOG-7hldnIJoePaf7k5JdkM/0/public/basic?alt=json";
+var FOOTER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1Sa-XkixccqJHAJc4zv7JrOG-7hldnIJoePaf7k5JdkM/879836599/public/basic?alt=json";
 
 var MAP_STYLE_URL = "js/map.json";
 var FIRST_CHAR_CODE = 65; //unicdoe 'A'
@@ -37,6 +38,7 @@ $(function(){
   var banners = [];
   var events = [];
   var categories = [];
+  var footer = [];
   var pages = {"welcome": [], "membership": [], "contact": [] };
   var defaultImage = "img/default.png";
   var markerDefaultImg = {url:'img/marker_default.png',anchor:new google.maps.Point(7,7)};
@@ -80,9 +82,9 @@ $(function(){
   map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
   
   var infowindow = new InfoBox({
-    boxClass:"marker-info",
+    boxClass:"marker-container",
     pixelOffset: new google.maps.Size(-226, -350),
-    closeBoxMargin: "-20px 5px 2px 2px",
+    closeBoxMargin: "-15px 5px 2px 2px",
     disableAutoPan:true,
     closeBoxURL:"img/info_window_close.png"
   });
@@ -217,6 +219,15 @@ $(function(){
    });
   });
   
+  //get footer data
+  fetchSheet(FOOTER_DATA_URL,footer,function(){
+    var $footerList = $footer.find("ul");
+    $footerList.append("<li>"+footer[0].business+"</li>");
+    $footerList.append("<li>"+footer[0].address+"</li>");
+    $footerList.append("<li><a href='tel:"+footer[0].phone.replace(/[A-Za-z.-]/g, "")+"'>"+footer[0].phone+"</a></li>");
+    $footerList.append("<li><a href='mailto:"+footer[0].email+"'>"+footer[0].email+"</a></li>");
+  });
+  
   //called once members data is fully populated
   function membersLoaded(){
 
@@ -265,6 +276,14 @@ $(function(){
           m.address2 = !m.address2 ? "" : m.address2;
           m.phone = !m.phone ? "" : m.phone;
           m.hours = !m.hours ? "" : m.hours;
+          m.detailhours = !m.detailhours ? "" : m.detailhours;
+          m.monday = m.detailhours.length == 0 ? "" : m.detailhours.toLowerCase().split(weekdays[1])[1].split(weekdays[2])[0];
+          m.tuesday = m.detailhours.length == 0 ? "" : m.detailhours.toLowerCase().split(weekdays[2])[1].split(weekdays[3])[0];
+          m.wednesday = m.detailhours.length == 0  ? "" : m.detailhours.toLowerCase().split(weekdays[3])[1].split(weekdays[4])[0];
+          m.thursday = m.detailhours.length == 0  ? "" : m.detailhours.toLowerCase().split(weekdays[4])[1].split(weekdays[5])[0];
+          m.friday = m.detailhours.length == 0  ? "" :  m.detailhours.toLowerCase().split(weekdays[5])[1].split(weekdays[6])[0];
+          m.saturday = m.detailhours.length == 0  ? "" : m.detailhours.toLowerCase().split(weekdays[6])[1].split(weekdays[0])[0];
+          m.sunday = m.detailhours.length == 0  ? "" : m.detailhours.toLowerCase().split(weekdays[0])[1];
           m.url = !m.url ? "" : m.url;
           m.href = m.url.length != 0 && m.url.indexOf("http://") == -1 ? "http://"+m.url : m.url;
         
@@ -294,15 +313,29 @@ $(function(){
   if(selectedMember) selectedMember.marker.selected.setVisible(false);
   selectedMember = m;
   m.marker.selected.setVisible(true);
+  
+  var monStr = m.monday.length == 0 ? "" : "<li>Monday:<span class='hours'>"+m.monday+"</span></li>";
+  var tuesStr = m.tuesday.length == 0 ? "" : "<li>Tuesday:<span class='hours'>"+m.tuesday+"</span></li>";
+  var wedStr = m.wednesday.length == 0 ? "" : "<li>Wednesday:<span class='hours'>"+m.wednesday+"</span></li>";
+  var thurStr = m.thursday.length == 0 ? "" : "<li>Thursday:<span class='hours'>"+m.thursday+"</span></li>";
+  var friStr = m.friday.length == 0 ? "" : "<li>Friday:<span class='hours'>"+m.friday+"</span></li>";
+  var satStr = m.saturday.length == 0 ? "" : "<li>Saturday:<span class='hours'>"+m.saturday+"</span></li>";
+  var sunStr = m.sunday.length == 0 ? "" : "<li>Sunday:<span class='hours'>"+m.sunday+"</span></li>";
+  var hourStr = monStr + tuesStr + wedStr + thurStr + friStr + satStr + sunStr;
+  
+  var descriptionStr = !m.description ? "" : "<p class='description'>"+m.description+"</p>";
+
   infowindow.setContent("<div class='marker-content'>" +
-                      "<ul class='info'>" +
-                      "<li><span></span>"+m.title+"</li>" +
-                      "<li>"+m.address+"</li>" +
-                      "<li>"+m.phone+"</li>" +
-                      //"<li>Hours: "+m.hours+"</li>" +
-                      "<li><a class='site' href='http://"+m.url+"'>"+m.url+"</a></li>" +
-                      "</ul>" +
-                      "</div>");
+                          "<ul class='marker-details left'>" +
+                            "<li>"+m.title+"</li>" +
+                            "<li>"+m.address+"</li>" +
+                            "<li>"+m.phone+"</li>" +
+                            "<li class='site-container'><a class='site' target='_blank' href='http://"+m.url+"'>"+m.url+"</a></li>" +
+                            hourStr +
+                          "</ul>" +
+                          "<ul class='marker-details right'>"+descriptionStr+"</ul>" +
+                        "</div>");
+  
   infowindow.open(map, m.marker.selected);
   
   var $activeMember = $(".directory-list #"+m.id);

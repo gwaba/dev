@@ -300,18 +300,45 @@ p,li{
   z-index:999999;
   pointer-events:none;
 }
-.marker-info{
+.marker-container{
   background:url('../img/infowindow.png') no-repeat;
   width:370px;
   height:255px;
   padding:35px 35px;
   pointer-events:none;
+  padding-top:30px;
 }
-.marker-info > img{
+.marker-container > img{
   pointer-events:auto;
 }
 .marker-content{
   pointer-events:auto;
+}
+.marker-details{
+  width:195px;
+  float:left;
+  height:225px;
+  overflow:hidden;
+}
+.marker-details .site-container{
+  margin-bottom:24px;
+}
+.hours{
+  position:absolute;
+  left:110px;
+}
+p.description{
+  font-size:12px;
+  padding-top:16px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.marker-details.left{
+  border-right:solid 1px;
+  border-color:#125055;
+}
+.marker-details.right{
+  margin-left:24px;
 }
 /*********************** FOOTER ***********************/
 #footer{
@@ -363,7 +390,6 @@ p,li{
   margin-left: -50px;
   line-height: 20px;
 }
-
 /*********************** DIRECTORY & EVENTS ***********************/
 .scroll-container{
   overflow: hidden;
@@ -393,9 +419,6 @@ p,li{
   opacity:0;
   display:block
 }
-.list > li.selected .info li:first-child{
-  color:#f95304;
-}
 .info{
   width:224px;
 }
@@ -406,30 +429,33 @@ p,li{
   margin-left:30px;
   border-bottom:solid 1px;
 }
-.info li:first-child{
+.info li:first-child .label,
+.categories a.selected,
+.list > li.selected .info li:first-child,
+.marker-details li:first-child{
+  color:#f95304;
+}
+.info li, 
+.desc, 
+.marker-details li{
+  font-size:12px;
+}
+.info li:first-child,
+.marker-details li:first-child{
   text-transform:uppercase;
   font-size:14px;
   padding-bottom:14px;
 }
-.info li:first-child .label{
-  color:#f95304;
-}
-.info li, .desc{
-  font-size:12px;
-}
-.info li{
+.info li,
+.marker-details li:first-child{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.info .site{
+.site{
   text-decoration:underline;
   color:#125055;
 }
-.categories a.selected{
-  color:#f95304;
-}
-
 /*********************** DIRECTORY ***********************/
 .directory-cat{
   width:348px;
