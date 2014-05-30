@@ -318,7 +318,6 @@ p,li{
   width:195px;
   float:left;
   height:225px;
-  overflow:hidden;
 }
 .marker-details .site-container{
   margin-bottom:24px;
@@ -329,16 +328,15 @@ p,li{
 }
 p.description{
   font-size:12px;
-  padding-top:16px;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-.marker-details.left{
-  border-right:solid 1px;
-  border-color:#125055;
-}
 .marker-details.right{
-  margin-left:24px;
+  padding-left:24px;
+  height:195px;
+  margin-top:30px;
+  border-left: solid 1px;
+  border-color: #125055;
 }
 /*********************** FOOTER ***********************/
 #footer{
@@ -435,6 +433,10 @@ p.description{
 .marker-details li:first-child{
   color:#f95304;
 }
+.info li:first-child .label{
+  float:left;
+  width:23px;
+}
 .info li, 
 .desc, 
 .marker-details li{
@@ -445,12 +447,17 @@ p.description{
   text-transform:uppercase;
   font-size:14px;
   padding-bottom:14px;
+  overflow:visible;
 }
-.info li,
-.marker-details li:first-child{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.info li:first-child{
+  white-space:normal;
+  text-indent:-23px;
+  padding-left:23px;
+}
+.info li, .marker-details li{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .site{
   text-decoration:underline;
@@ -473,9 +480,6 @@ p.description{
   font-weight: 600;
   padding:2px 0px;
 }
-.directory-list{
-  width:500px;
-}
 .directory-list .info li:first-child{
   cursor:pointer;
 }
@@ -495,9 +499,6 @@ p.description{
   font-size:11px;
   font-weight:600;
   padding:2px 0px;
-}
-.events-list{
-  width:800px;
 }
 .events-photo{
   width:156px;

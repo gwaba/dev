@@ -122,7 +122,6 @@ $(function(){
      $(".headline.membership h1").text(pages.membership[0].title);
      $(".headline.membership p").text(pages.membership[0].text);
      $(".headline.membership .explore-form h3").text(pages.membership[0].linktitle);
-     $(".headline.membership .explore-form").attr("href", pages.membership[0].link);
   });
   fetchSheet(CONTACT_PAGE_URL,pages.contact,function(){
     $contactList = $(".headline.contact ul");
@@ -293,7 +292,6 @@ $(function(){
                             "<li><span class='label'></span>"+m.title+"</li>" +
                             "<li>"+m.address+" "+m.address2+"</li>" +
                             "<li>"+m.phone+"</li>" +
-                            "<li>Hours: "+m.hours+"</li>" +
                             "<li><a class='site' target='_blank' href='"+m.href+"'>"+m.url+"</a></li>" +
                           "</ul>" +
                         "</li>");
@@ -403,8 +401,10 @@ $(function(){
   }
 
   $("#menu-list a").click(function(){
+     var $pActive = $(".headline.active");
      var c = $(this).attr('class');
-     $(".headline.active").removeClass('active');
+     $pActive.removeClass('active');
+     var pc = $pActive.attr('class').replace("headline","").replace(" ","");
      $(".headline."+c).addClass('active');
      closeInfoWindow();
      if((c == "directory" || c == "events" ) && !firstResize ) {
@@ -412,20 +412,21 @@ $(function(){
        firstResize = true;
      }
      if(c == "directory") labelMarkers();
-     else {
+     else if (pc == "directory") {
        members.forEach(function(m){
          unlabelMarkers(m);
        });
+       map.panTo(mapCenter);
+       map.setZoom(ZOOM);
      }
   });
   
   $("#logo").click(function(){
-    $(".headline.active").removeClass('active');
-    $(".headline.about").addClass('active');
-    closeInfoWindow();
-    members.forEach(function(m){
-      unlabelMarkers(m);
-    });
+    $("#menu-list .about").trigger("click");
+  });
+  
+  $(".explore-form").click(function(){
+     $("#menu-list .directory").trigger("click");
   });
   
   window.onresize = function(e){
@@ -481,11 +482,10 @@ $(function(){
  }
 
  function unlabelMarkers(m){
-     if(m.latitude && m.longitude){
-      m.marker.labelled.setVisible(false);
-      m.marker.selected.labelContent = "";
-      m.marker.labelled.labelContent = "";
-     }
+    m.marker.selected.labelContent = "";
+    m.marker.labelled.labelContent = "";
+    m.marker.labelled.setVisible(false);
+    m.marker.selected.setVisible(false);
  }
 
  //Nice Hack...but whatever
