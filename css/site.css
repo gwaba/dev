@@ -397,6 +397,7 @@ p.description{
 }
 .list{
   overflow-y:scroll;
+  overflow-x:hidden;
 }
 .info,
 .photo,
@@ -424,7 +425,7 @@ p.description{
   padding-top:28px;
   height:120px;
   text-align:left;
-  margin-left:30px;
+  margin-left:35px;
   border-bottom:solid 1px;
 }
 .info li:first-child .label,
@@ -435,7 +436,9 @@ p.description{
 }
 .info li:first-child .label{
   float:left;
-  width:23px;
+  width:30px;
+  margin-left:-34px;
+  text-align:right;
 }
 .info li, 
 .desc, 
@@ -451,8 +454,6 @@ p.description{
 }
 .info li:first-child{
   white-space:normal;
-  text-indent:-23px;
-  padding-left:23px;
 }
 .info li, .marker-details li{
   white-space:nowrap;

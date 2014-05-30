@@ -21,6 +21,7 @@ var DEFAULT_DIRECTORY_ZOOM = 16;
 var LEFT_PAN_IN_PIXELS = 270;
 var RIGHT_PAN_IN_PIXELS = -200;
 var DOWN_PAN_IN_PIXELS = -200;
+var DIRECTORY_DOWN_PAN_IN_PIXELS = 50;
 
 var DEFAULT_LAT = 43.0813438; //Williamson St. Madison,WI 53703
 var DEFAULT_LOG = -89.3671071; //Williamson St. Madison,WI 53703
@@ -351,6 +352,8 @@ $(function(){
   
   if ($(".headline.active").hasClass("contact"))
     map.panBy(LEFT_PAN_IN_PIXELS,DOWN_PAN_IN_PIXELS);
+  else if ($(".headline.active").hasClass("directory"))
+    map.panBy(RIGHT_PAN_IN_PIXELS,DIRECTORY_DOWN_PAN_IN_PIXELS);
   else
     map.panBy(RIGHT_PAN_IN_PIXELS,DOWN_PAN_IN_PIXELS);
  }
