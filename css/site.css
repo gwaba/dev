@@ -136,11 +136,12 @@ p,li{
 /*********************** menu ***********************/
 #menu{
   height:30px;
-  width:100%;
   background:#f26522;
   position:absolute;
   box-shadow:-1px 5px 16px 0px rgba(96,47,0,0.3);
   z-index:2;
+  right: 0;
+  left: 0;
 }
 #menu-list{
   padding:0 0 0 220px;
