@@ -21,7 +21,7 @@ var DEFAULT_DIRECTORY_ZOOM = 16;
 var LEFT_PAN_IN_PIXELS = 270;
 var RIGHT_PAN_IN_PIXELS = -200;
 var DOWN_PAN_IN_PIXELS = -200;
-var DIRECTORY_DOWN_PAN_IN_PIXELS = 50;
+var DIRECTORY_DOWN_PAN_IN_PIXELS = 10;
 
 var DEFAULT_LAT = 43.0813438; //Williamson St. Madison,WI 53703
 var DEFAULT_LOG = -89.3671071; //Williamson St. Madison,WI 53703
@@ -33,7 +33,6 @@ var twoLetterlabelAnchor = new google.maps.Point(9.5,42);
 
 $(function(){
 
-  var geocoder = new google.maps.Geocoder();
   var mapCenter = new google.maps.LatLng(LAT,LONG);
   var selectedMember;
   var banners = [];
@@ -175,6 +174,8 @@ $(function(){
     var todayMonth = months[new Date().getMonth()];
     $(".events-cat li a").filter("[data-cat*='"+todayMonth+"']").addClass("selected");
     
+    events.sort(compare);
+    
     //events loaded
     events.forEach(function(e){
       
@@ -233,6 +234,10 @@ $(function(){
 
         //load markers based on extented data and lat/log
         var activeCat = $("ul.directory-cat .selected").data("cat");
+  
+        //sort alphebetically first
+        members.sort(compare);
+  
         members.forEach(function(m,i){
           m.latitude = parseFloat(m.latitude);
           m.longitude = parseFloat(m.longitude);
@@ -407,7 +412,7 @@ $(function(){
      var $pActive = $(".headline.active");
      var c = $(this).attr('class');
      $pActive.removeClass('active');
-     var pc = $pActive.attr('class').replace("headline","").replace(" ","");
+     var pc = $pActive.attr('class').replace(/headline/g,"").replace(/\s/g,"");
      $(".headline."+c).addClass('active');
      closeInfoWindow();
      if((c == "directory" || c == "events" ) && !firstResize ) {
@@ -428,7 +433,7 @@ $(function(){
     $("#menu-list .about").trigger("click");
   });
   
-  $(".explore-form").click(function(){
+  $(".explore-form:not(.download)").click(function(){
      $("#menu-list .directory").trigger("click");
   });
   
@@ -470,10 +475,9 @@ $(function(){
         if (m.categories.indexOf(cat) != -1){
             found++;
             setLabel(m,found);
-            if(m.latitude && m.longitude){
-                m.marker.labelled.setVisible(true);
-                bounds.extend(m.marker.labelled.position);
-            }
+            m.marker.labelled.setVisible(true);
+            bounds.extend(m.marker.labelled.position);
+            map.fitBounds(bounds);
         }
         else unlabelMarkers(m);
     });
@@ -517,6 +521,14 @@ $(function(){
 
  function getChar(n) {
     return String.fromCharCode(FIRST_CHAR_CODE + n);
+ }
+
+ function compare(a,b) {
+    if (a.title < b.title)
+        return -1;
+    if (a.title > b.title)
+        return 1;
+    return 0;
  }
 
 
