@@ -2,15 +2,15 @@ var LAT = 43.084126;
 var LONG = -89.3626029;
 var ZOOM = 17;
 
-var MEMBER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1pCnejtPSK2EhoOlgPM03w09oQketOf9y0h0X-hpmrrU/0/public/basic?alt=json";
-var MEMBER_EXTENDED_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1pCnejtPSK2EhoOlgPM03w09oQketOf9y0h0X-hpmrrU/262201806/public/basic?alt=json";
-var MEMBER_CATEGORIES_URL = "https://spreadsheets.google.com/feeds/cells/1pCnejtPSK2EhoOlgPM03w09oQketOf9y0h0X-hpmrrU/934897192/public/basic?alt=json";
-var EVENT_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1L-Q-SoZ4If8TMuQzbnz5mFcnRJ_BcAVcerv-Z80YtW4/0/public/basic?alt=json";
-var WELCOME_PAGE_URL = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/0/public/basic?alt=json";
-var MEMBERSHIP_PAGE_URL  = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/153417301/public/basic?alt=json";
-var CONTACT_PAGE_URL  = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/1421411393/public/basic?alt=json";
-var BANNER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1Sa-XkixccqJHAJc4zv7JrOG-7hldnIJoePaf7k5JdkM/0/public/basic?alt=json";
-var FOOTER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1Sa-XkixccqJHAJc4zv7JrOG-7hldnIJoePaf7k5JdkM/879836599/public/basic?alt=json";
+var MEMBER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1pCnejtPSK2EhoOlgPM03w09oQketOf9y0h0X-hpmrrU/0/public/basic?alt=json-in-script&callback=?";
+var MEMBER_EXTENDED_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1pCnejtPSK2EhoOlgPM03w09oQketOf9y0h0X-hpmrrU/262201806/public/basic?alt=json-in-script&callback=?";
+var MEMBER_CATEGORIES_URL = "https://spreadsheets.google.com/feeds/cells/1pCnejtPSK2EhoOlgPM03w09oQketOf9y0h0X-hpmrrU/934897192/public/basic?alt=json-in-script&callback=?";
+var EVENT_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1L-Q-SoZ4If8TMuQzbnz5mFcnRJ_BcAVcerv-Z80YtW4/0/public/basic?alt=json-in-script&callback=?";
+var WELCOME_PAGE_URL = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/0/public/basic?alt=json-in-script&callback=?";
+var MEMBERSHIP_PAGE_URL  = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/153417301/public/basic?alt=json-in-script&callback=?";
+var CONTACT_PAGE_URL  = "https://spreadsheets.google.com/feeds/cells/1vXwHI6fAsXJGI0RUV3HOCkoOfhAnlJU6AcCdeLZuFF0/1421411393/public/basic?alt=json-in-script&callback=?";
+var BANNER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1Sa-XkixccqJHAJc4zv7JrOG-7hldnIJoePaf7k5JdkM/0/public/basic?alt=json-in-script&callback=?";
+var FOOTER_DATA_URL = "https://spreadsheets.google.com/feeds/cells/1Sa-XkixccqJHAJc4zv7JrOG-7hldnIJoePaf7k5JdkM/879836599/public/basic?alt=json-in-script&callback=?";
 
 var MAP_STYLE_URL = "js/map.json";
 var FIRST_CHAR_CODE = 65; //unicdoe 'A'
@@ -122,6 +122,7 @@ $(function(){
      $(".headline.membership h1").text(pages.membership[0].title);
      $(".headline.membership p").text(pages.membership[0].text);
      $(".headline.membership .explore-form h3").text(pages.membership[0].linktitle);
+     $(".headline.membership .explore-form").attr("href", pages.membership[0].link);
   });
   fetchSheet(CONTACT_PAGE_URL,pages.contact,function(){
     $contactList = $(".headline.contact ul");
@@ -199,8 +200,7 @@ $(function(){
       
       e.title = !e.title ? "" : e.title;
       e.location = !e.location ? "" : e.location;
-      e.time = !e.time ? "" : e.time;
-      e.url = !e.url ? "" : e.url;
+      e.time = !e.time ? "<a class='event-hours' target='_blank' href='"+e.viewhourslink+"'>View Hours</a>" : "Time: "+e.time;
       e.description = !e.description ? "" : e.description;
       e.href = e.url.length != 0 && e.url.indexOf("http://") == -1 ? "http://"+e.url : e.url;
       
@@ -210,7 +210,7 @@ $(function(){
                          "<li>"+e.title+"</li>" +
                          "<li class='date'>"+date+"</li>" +
                          "<li>"+e.location+"</li>" +
-                         "<li>Time: "+e.time+"</li>" +
+                         "<li>"+e.time+"</li>" +
                          "<li><a class='site' target='_blank' href='"+e.href+"'>"+e.url+"</a></li>" +
                        "</ul>" +
                        "<p class='desc'>"+e.description+"</p>" +
@@ -370,7 +370,7 @@ $(function(){
       if(typeof(callback) == "function") callback();
     });
   }
- 
+  
   //parse cell data into array
   function parseJSON(json,array){
     var data = getCellData(json.feed.entry);
