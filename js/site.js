@@ -96,7 +96,13 @@ $(function(){
   //get banner images
   fetchSheet(BANNER_DATA_URL,banners,function(){
     var $slideshow = $("#slideshow");
+    var foundBanners = [];
     banners.forEach(function(b,i){
+       if(b.thumbnail){
+         foundBanners.push(b);
+       }
+    });
+    foundBanners.forEach(function(b,i){
       var $slide = $("<a target='_blank' href='"+b.websiteurl+"'><div>"+b.title+"</div><img src='"+b.thumbnail+"'></a>");
       var img = new Image();
       $slideshow.append($slide);
@@ -106,7 +112,7 @@ $(function(){
       }
       img.src = b.thumbnail;
       $slide.children("div").after(img);
-      if(typeof banners[i+1] === "undefined") $slide.addClass("active");
+      if(typeof foundBanners[i+1] === "undefined") $slide.addClass("active");
     });
     setInterval('cycleImages()', 5000);
   });
@@ -257,7 +263,6 @@ $(function(){
             
           m.marker = {};
           m.marker.plain = new google.maps.Marker({ map:map, position:p, animation:google.maps.Animation.DROP, icon:markerDefaultImg,clickable: true, visible:true});
-          m.marker.default = m.marker.plain;
           m.marker.labelled = new MarkerWithLabel({map:map, position:p, icon:markerImg, labelInBackground:false, labelClass:"marker-label-labelled",visible:false });
           m.marker.selected = new MarkerWithLabel({map:map, position:p, icon:markerSelectedImg, labelInBackground:false, labelClass:"marker-label-selected",visible:false });
           google.maps.event.addListener(m.marker.plain, 'click', function(){ memberSelected(m); });
