@@ -210,14 +210,16 @@ $(function(){
       e.description = !e.description ? "" : e.description;
       e.href = e.url.length != 0 && e.url.indexOf("http://") == -1 ? "http://"+e.url : e.url;
       
+      var classExtend = e.description == "" ? "extend" : "";
+      
       var $event = $("<li data-cat='"+e.month+"' class='"+e.show+"'>"+
                        "<img class='photo' src='"+e.thumbnail+"'></img>" +
                        "<ul class='info'>" +
                          "<li>"+e.title+"</li>" +
-                         "<li class='date'>"+date+"</li>" +
-                         "<li>"+e.location+"</li>" +
-                         "<li>"+e.time+"</li>" +
-                         "<li><a class='site' target='_blank' href='"+e.href+"'>"+e.url+"</a></li>" +
+                         "<li class='date "+classExtend+"'>"+date+"</li>" +
+                         "<li class='"+classExtend+"'>"+e.location+"</li>" +
+                         "<li class='"+classExtend+"'>"+e.time+"</li>" +
+                         "<li class='"+classExtend+"'><a class='site' target='_blank' href='"+e.href+"'>"+e.url+"</a></li>" +
                        "</ul>" +
                        "<p class='desc'>"+e.description+"</p>" +
                      "</li>");

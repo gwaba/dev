@@ -527,4 +527,6 @@ p.description{
  padding-top: 73px;
  height: 75px;
 }
-
+li.extend{
+  overflow:visible;
+}
