@@ -181,7 +181,7 @@ $(function(){
     var todayMonth = months[new Date().getMonth()];
     $(".events-cat li a").filter("[data-cat*='"+todayMonth+"']").addClass("selected");
     
-    events.sort(compare);
+    events.sort(compareByDate);
     
     //events loaded
     events.forEach(function(e){
@@ -533,6 +533,24 @@ $(function(){
         return -1;
     if (a.title > b.title)
         return 1;
+    return 0;
+ }
+
+ function compareByDate(a,b){
+    if( !a.startdate && !b.startdate)
+        return 0;
+    if (!a.startdate)
+        return -1;
+    if (!b.startdate)
+        return 1;
+     
+    var aStartDate = new Date(a.startdate);
+    var bStartDate = new Date(b.startdate);
+    
+    if (aStartDate <  bStartDate)
+      return -1;
+    if (aStartDate > bStartDate)
+      return 1;
     return 0;
  }
 

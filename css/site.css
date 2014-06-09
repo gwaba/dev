@@ -467,6 +467,7 @@ p.description{
 }
 .event-hours{
   color:#125055;
+  text-decoration:underline;
 }
 /*********************** DIRECTORY ***********************/
 .directory-cat{
